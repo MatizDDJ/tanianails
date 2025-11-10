@@ -18,6 +18,7 @@ import {
 } from "@/lib/firebase-services"
 import Toast from "@/components/toast"
 import AdminAuth from "@/components/admin-auth"
+import GaleriaAdmin from "@/components/galeria-admin"
 
 const serviciosDisponibles = [
   "Soft Gel",
@@ -33,7 +34,7 @@ const serviciosDisponibles = [
 export default function AdminPanel() {
   const [turnos, setTurnos] = useState<TurnoDisponible[]>([])
   const [reservas, setReservas] = useState<Reserva[]>([])
-  const [activeTab, setActiveTab] = useState<"turnos" | "reservas">("turnos")
+  const [activeTab, setActiveTab] = useState<"turnos" | "reservas" | "galeria" | "estadisticas">("turnos")
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
   const [generandoTurnos, setGenerandoTurnos] = useState(false)
 
@@ -192,6 +193,22 @@ export default function AdminPanel() {
             }`}
           >
             Reservas ({reservas.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("galeria")}
+            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
+              activeTab === "galeria" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Galería
+          </button>
+          <button
+            onClick={() => setActiveTab("estadisticas")}
+            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
+              activeTab === "estadisticas" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Estadísticas
           </button>
         </div>
 
@@ -392,6 +409,131 @@ export default function AdminPanel() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Galería Tab */}
+        {activeTab === "galeria" && <GaleriaAdmin />}
+
+        {/* Estadísticas Tab */}
+        {activeTab === "estadisticas" && (
+          <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {/* Total Reservas */}
+              <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-400 text-xs sm:text-sm">Total Reservas</h3>
+                  <Calendar className="w-5 h-5 text-[#ff2e91]" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-white">{reservas.length}</p>
+                <p className="text-xs text-gray-500 mt-1">Todas las reservas</p>
+              </div>
+
+              {/* Confirmadas */}
+              <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-400 text-xs sm:text-sm">Confirmadas</h3>
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-white">
+                  {reservas.filter((r) => r.estado === "confirmado").length}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {reservas.length > 0 
+                    ? `${Math.round((reservas.filter((r) => r.estado === "confirmado").length / reservas.length) * 100)}%`
+                    : '0%'}
+                </p>
+              </div>
+
+              {/* Turnos Disponibles */}
+              <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-400 text-xs sm:text-sm">Turnos Disponibles</h3>
+                  <Clock className="w-5 h-5 text-[#8b2eff]" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-white">
+                  {turnos.filter((t) => t.disponible).length}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Horarios libres</p>
+              </div>
+
+              {/* Servicio Más Popular */}
+              <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-400 text-xs sm:text-sm">Más Popular</h3>
+                  <span className="text-2xl">💅</span>
+                </div>
+                <p className="text-sm sm:text-base font-bold text-white truncate">
+                  {reservas.length > 0
+                    ? Object.entries(
+                        reservas.reduce((acc, r) => {
+                          acc[r.servicio] = (acc[r.servicio] || 0) + 1
+                          return acc
+                        }, {} as Record<string, number>)
+                      ).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A"
+                    : "N/A"}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Servicio top</p>
+              </div>
+            </div>
+
+            {/* Método de Pago */}
+            <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-4">Métodos de Pago</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-[#1a1a1a] rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">💵</span>
+                    <h4 className="text-white font-semibold">Efectivo</h4>
+                  </div>
+                  <p className="text-3xl font-bold text-[#ff2e91]">
+                    {reservas.filter((r) => r.metodoPago === "efectivo").length}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">reservas</p>
+                </div>
+                <div className="bg-[#1a1a1a] rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">🏦</span>
+                    <h4 className="text-white font-semibold">Transferencia</h4>
+                  </div>
+                  <p className="text-3xl font-bold text-[#8b2eff]">
+                    {reservas.filter((r) => r.metodoPago === "transferencia").length}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">reservas</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Servicios Más Reservados */}
+            <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-4">Top Servicios</h3>
+              <div className="space-y-3">
+                {Object.entries(
+                  reservas.reduce((acc, r) => {
+                    acc[r.servicio] = (acc[r.servicio] || 0) + 1
+                    return acc
+                  }, {} as Record<string, number>)
+                )
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 5)
+                  .map(([servicio, cantidad]) => (
+                    <div key={servicio} className="flex items-center justify-between">
+                      <span className="text-white text-sm">{servicio}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-32 h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-[#ff2e91]"
+                            style={{
+                              width: `${(cantidad / reservas.length) * 100}%`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-[#ff2e91] font-semibold text-sm w-8 text-right">{cantidad}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         )}

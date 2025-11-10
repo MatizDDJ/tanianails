@@ -2,10 +2,10 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { X, Calendar, Clock, User, Phone, Check } from "lucide-react"
+import { X, Calendar, Clock, User, Phone, Check, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { obtenerTurnosDisponibles, crearReserva, actualizarTurno } from "@/lib/firebase-services"
+import { obtenerTurnosDisponibles, crearReserva, actualizarTurno, buscarCliente, obtenerOCrearCliente, actualizarHistorialCliente } from "@/lib/firebase-services"
 import type { TurnoDisponible } from "@/lib/firebase-services"
 import Toast from "@/components/toast"
 
@@ -21,10 +21,12 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
     time: "",
     name: "",
     phone: "",
+    metodoPago: "efectivo" as "efectivo" | "transferencia",
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [turnosDisponibles, setTurnosDisponibles] = useState<TurnoDisponible[]>([])
   const [loading, setLoading] = useState(false)
+  const [buscandoCliente, setBuscandoCliente] = useState(false)
   const [selectedTurnoId, setSelectedTurnoId] = useState<string | null>(null)
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
 
@@ -44,6 +46,29 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
     }
   }
 
+  // Buscar cliente cuando cambia el teléfono
+  useEffect(() => {
+    const buscarDatosCliente = async () => {
+      if (formData.phone.length >= 8) {
+        setBuscandoCliente(true)
+        try {
+          const cliente = await buscarCliente(formData.phone)
+          if (cliente) {
+            setFormData(prev => ({ ...prev, name: cliente.nombre }))
+            setToast({ message: "¡Cliente encontrado! Datos autocompletados", type: "success" })
+          }
+        } catch (error) {
+          console.error("Error buscando cliente:", error)
+        } finally {
+          setBuscandoCliente(false)
+        }
+      }
+    }
+
+    const timeout = setTimeout(buscarDatosCliente, 500)
+    return () => clearTimeout(timeout)
+  }, [formData.phone])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -55,15 +80,26 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
     setLoading(true)
 
     try {
+      // Obtener o crear cliente
+      const cliente = await obtenerOCrearCliente(formData.name, formData.phone)
+
+      // Crear reserva
       await crearReserva({
         nombre: formData.name,
         whatsapp: formData.phone,
         servicio: formData.service,
         fecha: formData.date,
         horario: formData.time,
+        metodoPago: formData.metodoPago,
         estado: "confirmado",
       })
 
+      // Actualizar historial del cliente
+      if (cliente.id) {
+        await actualizarHistorialCliente(cliente.id, formData.service)
+      }
+
+      // Marcar turno como no disponible
       await actualizarTurno(selectedTurnoId, { disponible: false })
 
       setToast({ message: "¡Reserva confirmada exitosamente!", type: "success" })
@@ -185,7 +221,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                     <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#8b2eff]" />
-                    WhatsApp
+                    WhatsApp {buscandoCliente && <span className="text-[10px] text-gray-500 ml-2">Buscando...</span>}
                   </label>
                   <Input
                     type="tel"
@@ -197,6 +233,37 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                     autoComplete="tel"
                     maxLength={20}
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                    <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#ff2e91]" />
+                    Método de Pago
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, metodoPago: "efectivo" })}
+                      className={`p-3 rounded-lg border transition-all text-sm sm:text-base font-medium ${
+                        formData.metodoPago === "efectivo"
+                          ? "bg-[#ff2e91] border-[#ff2e91] text-white shadow-lg shadow-[#ff2e91]/50"
+                          : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300 hover:border-[#ff2e91]"
+                      }`}
+                    >
+                      💵 Efectivo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, metodoPago: "transferencia" })}
+                      className={`p-3 rounded-lg border transition-all text-sm sm:text-base font-medium ${
+                        formData.metodoPago === "transferencia"
+                          ? "bg-[#ff2e91] border-[#ff2e91] text-white shadow-lg shadow-[#ff2e91]/50"
+                          : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300 hover:border-[#ff2e91]"
+                      }`}
+                    >
+                      🏦 Transferencia
+                    </button>
+                  </div>
                 </div>
 
                 <Button
