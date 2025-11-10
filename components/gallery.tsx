@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Instagram } from "lucide-react"
 
 const galleryImages = [
   { id: 1, url: "/nail-art-pink-glitter.jpg", alt: "Nail art rosa" },
@@ -42,9 +43,11 @@ export default function Gallery() {
 
         <div className="text-center mt-12">
           <Button
-            onClick={() => window.open("https://instagram.com/tanianails", "_blank")}
-            className="bg-gradient-to-r from-[#ff2e91] to-[#8b2eff] hover:opacity-90 text-white px-8 py-6 text-lg"
+            onClick={() => window.open("https://www.instagram.com/tania_nails.bfb/", "_blank")}
+            size="lg"
+            className="bg-[#ff2e91] hover:bg-[#ff2e91]/90 text-white glow-pink transform hover:scale-105 active:scale-95 transition-all"
           >
+            <Instagram className="w-5 h-5 mr-2" />
             Ver más en Instagram
           </Button>
         </div>

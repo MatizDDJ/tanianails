@@ -316,3 +316,56 @@
 .glow-red {
   box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 0 40px rgba(239, 68, 68, 0.2);
 }
+
+/* Scroll personalizado y optimizaciones móviles */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth scroll para toda la página */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimización para touch en móviles */
+@media (max-width: 640px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevenir zoom en inputs en móvil */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Mejorar el scroll en modales móviles */
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+}
+
+/* Touch target mínimo para botones en móvil */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Mejora del contraste en textos pequeños */
+@media (max-width: 640px) {
+  .text-gray-400 {
+    color: #9ca3af;
+  }
+  
+  .text-gray-500 {
+    color: #a1a1aa;
+  }
+}

@@ -68,23 +68,23 @@ export default function Services() {
   const [selectedService, setSelectedService] = useState<string | null>(null)
 
   return (
-    <section id="services" className="py-12 sm:py-20 relative">
+    <section id="services" className="py-10 sm:py-16 md:py-20 relative">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 text-glow-pink">Nuestros Servicios</h2>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto px-4">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-3 sm:mb-4 text-glow-pink">Nuestros Servicios</h2>
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2 sm:px-4">
             Técnicas de última generación para que tus uñas luzcan perfectas
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {services.map((service, index) => (
             <div
               key={service.name}
-              className="group bg-[#111111] rounded-2xl overflow-hidden border border-[#2a2a2a] hover:border-[#ff2e91] transition-all duration-300 hover:glow-pink animate-fade-in-up transform hover:scale-105 hover:-translate-y-2"
+              className="group bg-[#111111] rounded-xl sm:rounded-2xl overflow-hidden border border-[#2a2a2a] hover:border-[#ff2e91] transition-all duration-300 hover:glow-pink animate-fade-in-up sm:transform sm:hover:scale-105 sm:hover:-translate-y-2"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="relative h-40 sm:h-48 overflow-hidden">
+              <div className="relative h-32 sm:h-40 md:h-48 overflow-hidden">
                 <img
                   src={service.image || "/placeholder.svg"}
                   alt={service.name}
@@ -93,26 +93,26 @@ export default function Services() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent" />
               </div>
 
-              <div className="p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-2 group-hover:text-[#ff2e91] transition-colors">
+              <div className="p-3 sm:p-4 md:p-6">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-1.5 sm:mb-2 group-hover:text-[#ff2e91] transition-colors">
                   {service.name}
                 </h3>
-                <p className="text-gray-400 text-xs sm:text-sm mb-4 leading-relaxed line-clamp-2">{service.description}</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-2">{service.description}</p>
 
-                <div className="flex items-center justify-between mb-4 text-xs sm:text-sm">
+                <div className="flex items-center justify-between mb-3 sm:mb-4 text-xs sm:text-sm">
                   <div className="flex items-center gap-1 text-[#8b2eff]">
                     <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span>{service.duration}</span>
+                    <span className="text-[10px] sm:text-xs">{service.duration}</span>
                   </div>
                   <div className="flex items-center gap-1 text-[#ff2e91] font-semibold">
                     <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span>{service.price}</span>
+                    <span className="text-xs sm:text-sm">{service.price}</span>
                   </div>
                 </div>
 
                 <Button
                   onClick={() => setSelectedService(service.name)}
-                  className="w-full bg-[#ff2e91] hover:bg-[#ff2e91]/90 text-white transform hover:scale-105 active:scale-95 transition-all text-sm sm:text-base py-5 sm:py-6"
+                  className="w-full bg-[#ff2e91] hover:bg-[#ff2e91]/90 text-white active:scale-95 transition-all text-xs sm:text-sm md:text-base py-3 sm:py-4 md:py-5"
                 >
                   Reservar
                 </Button>

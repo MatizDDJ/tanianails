@@ -76,14 +76,38 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-white">
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+            className="md:hidden text-white p-2 hover:bg-[#2a2a2a] rounded-lg transition-all active:scale-95"
+            aria-label="Menu"
+          >
+            <div className="relative w-6 h-6">
+              <span 
+                className={`absolute left-0 w-full h-0.5 bg-white rounded-full transition-all duration-300 ${
+                  isMobileMenuOpen ? 'top-1/2 rotate-45' : 'top-1'
+                }`}
+              />
+              <span 
+                className={`absolute left-0 top-1/2 w-full h-0.5 bg-white rounded-full transition-all duration-300 ${
+                  isMobileMenuOpen ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
+                }`}
+              />
+              <span 
+                className={`absolute left-0 w-full h-0.5 bg-white rounded-full transition-all duration-300 ${
+                  isMobileMenuOpen ? 'top-1/2 -rotate-45' : 'top-5'
+                }`}
+              />
+            </div>
           </button>
         </div>
 
         {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 py-4 border-t border-[#2a2a2a]">
+        <div 
+          className={`md:hidden overflow-hidden transition-all duration-300 ${
+            isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="mt-4 py-4 border-t border-[#2a2a2a] animate-fade-in-up">
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => scrollToSection("hero")}
@@ -117,7 +141,7 @@ export default function Header() {
               </Button>
             </div>
           </div>
-        )}
+        </div>
       </nav>
     </header>
   )

@@ -78,7 +78,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
 
   const handleWhatsApp = () => {
     const message = `Hola Tania Nails! Confirmé una reserva:\nServicio: ${formData.service}\nFecha: ${formData.date}\nHora: ${formData.time}\nNombre: ${formData.name}\nGracias!`
-    window.open(`https://wa.me/598XXXXXXXX?text=${encodeURIComponent(message)}`, "_blank")
+    window.open(`https://wa.me/59809164731?text=${encodeURIComponent(message)}`, "_blank")
     onClose()
   }
 
@@ -89,35 +89,39 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-        <div className="bg-[#111111] rounded-2xl max-w-md w-full border border-[#2a2a2a] glow-pink animate-scale-in max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
+        <div className="bg-[#111111] rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md sm:w-full border-t sm:border border-[#2a2a2a] glow-pink animate-scale-in max-h-[95vh] sm:max-h-[90vh] overflow-y-auto my-auto">
 
           {/* Header */}
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#2a2a2a] sticky top-0 bg-[#111111] z-10">
-            <h3 className="text-xl sm:text-2xl font-bold text-white">{isSubmitted ? "¡Turno Reservado!" : "Reservar Turno"}</h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-white transition-all hover:scale-110 active:scale-95">
-              <X className="w-6 h-6" />
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#2a2a2a] sticky top-0 bg-[#111111] z-10 rounded-t-3xl sm:rounded-t-2xl">
+            <h3 className="text-lg sm:text-xl font-bold text-white">{isSubmitted ? "¡Turno Reservado!" : "Reservar Turno"}</h3>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-white transition-all hover:scale-110 active:scale-95 p-2 hover:bg-[#2a2a2a] rounded-lg"
+              aria-label="Cerrar"
+            >
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="p-4 sm:p-6">
+          <div className="p-4 sm:p-6 pb-6 sm:pb-6">
             {!isSubmitted ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <Calendar className="w-4 h-4 inline mr-2 text-[#ff2e91]" />
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                    <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#ff2e91]" />
                     Servicio
                   </label>
-                  <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-white font-medium">
+                  <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-white font-medium text-sm sm:text-base">
                     {formData.service}
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">El servicio seleccionado no se puede modificar</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 mt-1">El servicio no se puede modificar</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <Calendar className="w-4 h-4 inline mr-2 text-[#ff2e91]" />
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                    <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#ff2e91]" />
                     Fecha
                   </label>
                   <Input
@@ -125,28 +129,28 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value, time: "" })}
                     min={new Date().toISOString().split("T")[0]}
-                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white"
+                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white text-sm sm:text-base h-11 sm:h-12"
                     required
                   />
                 </div>
 
                 {formData.date && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      <Clock className="w-4 h-4 inline mr-2 text-[#8b2eff]" />
+                    <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                      <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#8b2eff]" />
                       Horarios Disponibles
                     </label>
                     {turnosDisponibles.length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2 max-h-40 sm:max-h-48 overflow-y-auto pr-1">
                         {turnosDisponibles.map((turno) => (
                           <button
                             key={turno.id}
                             type="button"
                             onClick={() => handleTimeSelect(turno)}
-                            className={`p-3 rounded-lg border transition-all transform hover:scale-105 active:scale-95 ${
+                            className={`p-2.5 sm:p-3 rounded-lg border transition-all transform active:scale-95 text-sm sm:text-base font-medium ${
                               selectedTurnoId === turno.id
-                                ? "bg-[#ff2e91] border-[#ff2e91] text-white animate-pulse-glow"
-                                : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300 hover:border-[#ff2e91] hover:glow-pink"
+                                ? "bg-[#ff2e91] border-[#ff2e91] text-white shadow-lg shadow-[#ff2e91]/50"
+                                : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300 hover:border-[#ff2e91]"
                             }`}
                           >
                             {turno.horario}
@@ -154,7 +158,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-sm bg-[#1a1a1a] p-4 rounded-lg border border-[#2a2a2a]">
+                      <p className="text-gray-500 text-xs sm:text-sm bg-[#1a1a1a] p-3 sm:p-4 rounded-lg border border-[#2a2a2a]">
                         No hay horarios disponibles para esta fecha. Intenta con otra fecha.
                       </p>
                     )}
@@ -162,50 +166,48 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <User className="w-4 h-4 inline mr-2 text-[#ff2e91]" />
-                    Tu Nombre Completo
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#ff2e91]" />
+                    Nombre Completo
                   </label>
                   <Input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Ej: María González"
-                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white focus:border-[#ff2e91] focus:ring-1 focus:ring-[#ff2e91] transition-all"
+                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white focus:border-[#ff2e91] focus:ring-1 focus:ring-[#ff2e91] transition-all text-sm sm:text-base h-11 sm:h-12"
                     required
                     autoComplete="name"
                     maxLength={50}
                   />
-                  <p className="text-xs text-gray-500 mt-1">Ingresa tu nombre completo</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <Phone className="w-4 h-4 inline mr-2 text-[#8b2eff]" />
-                    Tu Número de WhatsApp
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#8b2eff]" />
+                    WhatsApp
                   </label>
                   <Input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="099 123 456 o +598 99 123 456"
-                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white focus:border-[#8b2eff] focus:ring-1 focus:ring-[#8b2eff] transition-all"
+                    placeholder="099 123 456"
+                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white focus:border-[#8b2eff] focus:ring-1 focus:ring-[#8b2eff] transition-all text-sm sm:text-base h-11 sm:h-12"
                     required
                     autoComplete="tel"
                     maxLength={20}
                   />
-                  <p className="text-xs text-gray-500 mt-1">Ingresa tu número de WhatsApp para confirmar la reserva</p>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#ff2e91] hover:bg-[#ff2e91]/90 text-white glow-pink transform hover:scale-105 active:scale-95 transition-all py-6 text-lg"
+                  className="w-full bg-[#ff2e91] hover:bg-[#ff2e91]/90 text-white glow-pink active:scale-95 transition-all py-3 sm:py-4 text-base sm:text-lg font-semibold mt-2"
                   disabled={loading || !selectedTurnoId}
                 >
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
-                      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      Procesando...
+                      <span className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span className="text-sm sm:text-base">Procesando...</span>
                     </span>
                   ) : (
                     "Confirmar Reserva"
@@ -213,26 +215,28 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                 </Button>
               </form>
             ) : (
-              <div className="text-center py-8 animate-fade-in">
-                <div className="w-16 h-16 bg-[#ff2e91]/20 rounded-full flex items-center justify-center mx-auto mb-4 glow-pink animate-bounce-subtle">
-                  <Check className="w-8 h-8 text-[#ff2e91]" />
+              <div className="text-center py-6 sm:py-8 animate-fade-in">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#ff2e91]/20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 glow-pink animate-bounce-subtle">
+                  <Check className="w-7 h-7 sm:w-8 sm:h-8 text-[#ff2e91]" />
                 </div>
-                <p className="text-gray-300 mb-6 text-sm sm:text-base">
-                  Tu reserva ha sido confirmada. ¿Querés continuar por WhatsApp para coordinar detalles?
+                <h4 className="text-white font-bold text-lg sm:text-xl mb-2">¡Reserva Confirmada!</h4>
+                <p className="text-gray-300 mb-5 sm:mb-6 text-xs sm:text-sm px-2">
+                  ¿Querés continuar por WhatsApp para coordinar detalles?
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-2.5 sm:gap-3">
                   <Button 
                     onClick={handleWhatsApp} 
-                    className="flex-1 bg-[#25D366] hover:bg-[#25D366]/90 text-white transform hover:scale-105 active:scale-95 transition-all py-6"
+                    className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white active:scale-95 transition-all py-3 sm:py-4 text-sm sm:text-base font-semibold"
                   >
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Continuar por WhatsApp
                   </Button>
                   <Button
                     onClick={onClose}
                     variant="outline"
-                    className="flex-1 border-[#2a2a2a] text-white hover:bg-[#1a1a1a] bg-transparent transform hover:scale-105 active:scale-95 transition-all py-6"
+                    className="w-full border-[#2a2a2a] text-white hover:bg-[#1a1a1a] bg-transparent active:scale-95 transition-all py-3 sm:py-4 text-sm sm:text-base"
                   >
-                    Entendido
+                    Cerrar
                   </Button>
                 </div>
               </div>

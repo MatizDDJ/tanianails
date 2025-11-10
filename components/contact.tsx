@@ -43,11 +43,11 @@ export default function Contact() {
             </div>
             <h3 className="text-white font-semibold mb-2">Instagram</h3>
             <Button
-              onClick={() => window.open("https://instagram.com/tanianails", "_blank")}
+              onClick={() => window.open("https://www.instagram.com/tania_nails.bfb/", "_blank")}
               variant="link"
               className="text-[#ff2e91] hover:text-[#ff2e91]/80 p-0"
             >
-              @tanianails
+              @tania_nails.bfb
             </Button>
           </div>
 
@@ -57,7 +57,7 @@ export default function Contact() {
             </div>
             <h3 className="text-white font-semibold mb-2">WhatsApp</h3>
             <Button
-              onClick={() => window.open("https://wa.me/598XXXXXXXX", "_blank")}
+              onClick={() => window.open("https://wa.me/59809164731", "_blank")}
               variant="link"
               className="text-[#25D366] hover:text-[#25D366]/80 p-0"
             >
