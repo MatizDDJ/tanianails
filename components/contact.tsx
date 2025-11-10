@@ -1,7 +1,8 @@
 "use client"
 
-import { MapPin, Clock, Instagram, MessageCircle } from "lucide-react"
+import { MapPin, Clock, Instagram } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export default function Contact() {
   return (
@@ -53,7 +54,13 @@ export default function Contact() {
 
           <div className="bg-[#111111] rounded-2xl p-6 border border-[#2a2a2a] hover:border-[#25D366] transition-all duration-300 text-center">
             <div className="w-12 h-12 bg-[#25D366]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-6 h-6 text-[#25D366]" />
+              <Image 
+                src="/whatsapp-icon.svg" 
+                alt="WhatsApp" 
+                width={24} 
+                height={24}
+                className="w-6 h-6"
+              />
             </div>
             <h3 className="text-white font-semibold mb-2">WhatsApp</h3>
             <Button

@@ -1,8 +1,9 @@
 "use client"
 
-import { Sparkles, Instagram, MessageCircle } from "lucide-react"
+import { Sparkles, Instagram } from "lucide-react"
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function Footer() {
   const [clickCount, setClickCount] = useState(0)
@@ -106,7 +107,13 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[#25D366]/20 rounded-full flex items-center justify-center hover:bg-[#25D366]/30 transition-colors"
               >
-                <MessageCircle className="w-5 h-5 text-[#25D366]" />
+                <Image 
+                  src="/whatsapp-icon.svg" 
+                  alt="WhatsApp" 
+                  width={20} 
+                  height={20}
+                  className="w-5 h-5"
+                />
               </a>
             </div>
           </div>

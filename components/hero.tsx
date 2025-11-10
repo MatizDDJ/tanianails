@@ -1,7 +1,8 @@
 "use client"
 
-import { MessageCircle, Calendar } from "lucide-react"
+import { Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export default function Hero() {
   const scrollToServices = () => {
@@ -58,7 +59,13 @@ export default function Hero() {
               variant="outline"
               className="border-2 border-[#8b2eff] text-white hover:bg-[#8b2eff]/20 glow-purple text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 group bg-transparent active:scale-95 transition-all w-full sm:w-auto"
             >
-              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:animate-bounce-subtle" />
+              <Image 
+                src="/whatsapp-icon.svg" 
+                alt="WhatsApp" 
+                width={20} 
+                height={20}
+                className="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:animate-bounce-subtle"
+              />
               WhatsApp
             </Button>
           </div>
