@@ -138,10 +138,10 @@ export const eliminarImagenGaleria = async (id: string) => {
 }
 
 export const obtenerImagenesGaleria = async (categoria?: string) => {
-  let q = query(collection(db, "galeria"), orderBy("orden"), orderBy("timestamp", "desc"))
+  let q = query(collection(db, "galeria"), orderBy("orden", "asc"))
   
   if (categoria && categoria !== "todos") {
-    q = query(collection(db, "galeria"), where("categoria", "==", categoria), orderBy("orden"), orderBy("timestamp", "desc"))
+    q = query(collection(db, "galeria"), where("categoria", "==", categoria), orderBy("orden", "asc"))
   }
 
   const snapshot = await getDocs(q)
@@ -149,10 +149,10 @@ export const obtenerImagenesGaleria = async (categoria?: string) => {
 }
 
 export const escucharImagenesGaleria = (callback: (imagenes: ImagenGaleria[]) => void, categoria?: string) => {
-  let q = query(collection(db, "galeria"), orderBy("orden"), orderBy("timestamp", "desc"))
+  let q = query(collection(db, "galeria"), orderBy("orden", "asc"))
   
   if (categoria && categoria !== "todos") {
-    q = query(collection(db, "galeria"), where("categoria", "==", categoria), orderBy("orden"), orderBy("timestamp", "desc"))
+    q = query(collection(db, "galeria"), where("categoria", "==", categoria), orderBy("orden", "asc"))
   }
 
   return onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {

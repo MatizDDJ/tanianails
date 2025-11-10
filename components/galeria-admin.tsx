@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Plus, Trash2, Edit2, Instagram, Image as ImageIcon, ArrowUp, ArrowDown } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Plus, Trash2, Edit2, Instagram, Image as ImageIcon, ArrowUp, ArrowDown, Upload, Link2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -28,6 +28,9 @@ export default function GaleriaAdmin() {
   const [imagenes, setImagenes] = useState<ImagenGaleria[]>([])
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
   const [editando, setEditando] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [metodoSubida, setMetodoSubida] = useState<"archivo" | "url">("archivo")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [nuevaImagen, setNuevaImagen] = useState({
     url: "",
@@ -43,6 +46,49 @@ export default function GaleriaAdmin() {
 
     return () => unsubscribe()
   }, [])
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar que sea imagen
+    if (!file.type.startsWith('image/')) {
+      setToast({ message: "Por favor selecciona un archivo de imagen", type: "error" })
+      return
+    }
+
+    // Validar tamaño (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setToast({ message: "La imagen es muy grande (máximo 10MB)", type: "error" })
+      return
+    }
+
+    setUploading(true)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setNuevaImagen(prev => ({ ...prev, url: data.url }))
+        setToast({ message: "Imagen subida exitosamente", type: "success" })
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (error: any) {
+      console.error("Error subiendo imagen:", error)
+      setToast({ message: "Error al subir imagen: " + error.message, type: "error" })
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleCrearImagen = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,6 +112,10 @@ export default function GaleriaAdmin() {
         categoria: "Nail Art",
         orden: 0,
       })
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
 
       setToast({ message: "Imagen agregada exitosamente", type: "success" })
     } catch (error) {
@@ -135,23 +185,102 @@ export default function GaleriaAdmin() {
           Agregar Nueva Imagen
         </h2>
         <form onSubmit={handleCrearImagen} className="space-y-3 sm:space-y-4">
+          {/* Selector de método de subida */}
+          <div className="flex gap-2 p-1 bg-[#0a0a0a] rounded-lg border border-[#2a2a2a]">
+            <button
+              type="button"
+              onClick={() => setMetodoSubida("archivo")}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+                metodoSubida === "archivo"
+                  ? "bg-[#8b2eff] text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              <span className="hidden sm:inline">Subir desde</span> Celular
+            </button>
+            <button
+              type="button"
+              onClick={() => setMetodoSubida("url")}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+                metodoSubida === "url"
+                  ? "bg-[#8b2eff] text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Link2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Usar</span> Link
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="sm:col-span-2">
-              <label className="block text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
-                URL de la Imagen
-              </label>
-              <Input
-                type="url"
-                value={nuevaImagen.url}
-                onChange={(e) => setNuevaImagen({ ...nuevaImagen, url: e.target.value })}
-                placeholder="https://ejemplo.com/imagen.jpg"
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white text-sm h-10 sm:h-11"
-                required
-              />
-              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                Sube la imagen a ImgBB, Imgur o usa tu link de Instagram
-              </p>
-            </div>
+            {/* Input para subir archivo */}
+            {metodoSubida === "archivo" && (
+              <div className="sm:col-span-2">
+                <label className="block text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
+                  Selecciona una imagen
+                </label>
+                <div className="relative">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="file-upload"
+                    disabled={uploading}
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className={`flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#1a1a1a] border-2 border-dashed border-[#2a2a2a] rounded-lg cursor-pointer hover:border-[#8b2eff] transition-colors ${
+                      uploading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {uploading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-[#8b2eff] border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm text-gray-400">Subiendo imagen...</span>
+                      </>
+                    ) : nuevaImagen.url ? (
+                      <>
+                        <ImageIcon className="w-5 h-5 text-green-500" />
+                        <span className="text-sm text-green-500">Imagen lista ✓</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-5 h-5 text-gray-400" />
+                        <span className="text-sm text-gray-400">
+                          Toca para seleccionar foto
+                        </span>
+                      </>
+                    )}
+                  </label>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
+                  📱 La imagen se optimiza automáticamente (máx 10MB)
+                </p>
+              </div>
+            )}
+
+            {/* Input para URL */}
+            {metodoSubida === "url" && (
+              <div className="sm:col-span-2">
+                <label className="block text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
+                  URL de la Imagen
+                </label>
+                <Input
+                  type="url"
+                  value={nuevaImagen.url}
+                  onChange={(e) => setNuevaImagen({ ...nuevaImagen, url: e.target.value })}
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                  className="bg-[#1a1a1a] border-[#2a2a2a] text-white text-sm h-10 sm:h-11"
+                  required
+                />
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
+                  Pega el link de ImgBB, Imgur o Instagram
+                </p>
+              </div>
+            )}
 
             <div>
               <label className="block text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
