@@ -25,7 +25,48 @@ El script te preguntará:
 
 ---
 
-### 2️⃣ Cambiar Contraseña Admin (1 minuto)
+### 2️⃣ Configurar Cloudinary (5 minutos) - NUEVO ✨
+
+**¿Para qué?** Subir fotos desde tu celular directamente a la galería
+
+```
+1. Ve a: https://cloudinary.com/users/register/free
+2. Regístrate con tu email
+3. Copia tus credenciales del Dashboard:
+   - Cloud Name
+   - API Key
+   - API Secret
+4. Crea archivo .env.local en la raíz del proyecto
+5. Agrega:
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=tu-cloud-name
+   CLOUDINARY_API_KEY=tu-api-key
+   CLOUDINARY_API_SECRET=tu-api-secret
+
+   daznffgsh
+   986283345491915
+   xLKBrRWoZ2ApwvsWP6d2lsk8qgQ
+
+6. Reinicia servidor (Ctrl+C → pnpm dev)
+```
+
+**📚 Guía detallada:** Ver `CLOUDINARY_SETUP.md`
+
+---
+
+### 3️⃣ Crear Índice Firebase (2 minutos)
+
+```
+1. Ve a: https://console.firebase.google.com
+2. Tu proyecto → Firestore Database → Indexes
+3. Create Index:
+   - Collection: galeria
+   - Field: orden → Ascending
+4. Espera 2-5 minutos
+```
+
+---
+
+### 4️⃣ Cambiar Contraseña Admin (1 minuto)
 
 1. Abre: `components/admin-auth.tsx`
 2. Busca línea 18: `const ADMIN_PASSWORD = "TaniaNails2024"`
@@ -34,7 +75,7 @@ El script te preguntará:
 
 ---
 
-### 3️⃣ Probar Todo (5 minutos)
+### 5️⃣ Probar Todo (5 minutos)
 
 #### A) Probar Admin:
 1. Ve a: http://localhost:3000/admin
@@ -42,15 +83,27 @@ El script te preguntará:
 3. Crea un turno de prueba
 4. ✅ Verifica que aparece en la lista
 
-#### B) Probar Reserva:
+#### B) Probar Galería: ✨ NUEVO
+1. Ve a: http://localhost:3000/admin
+2. Pestaña "Galería"
+3. Click "Subir desde Celular"
+4. Selecciona una foto
+5. Espera "Imagen lista ✓"
+6. Completa descripción y categoría
+7. Click "Agregar Imagen"
+8. Ve a la home y verifica que aparece
+9. ✅ Prueba filtros por categoría
+
+#### C) Probar Reserva:
 1. Ve a: http://localhost:3000
 2. Scroll a "Servicios"
 3. Clic en "Reservar" en cualquier servicio
 4. Selecciona fecha y hora
-5. Completa formulario
-6. ✅ Verifica que aparece en Admin → Reservas
+5. Completa formulario (teléfono + nombre)
+6. Selecciona método de pago (efectivo/transferencia)
+7. ✅ Verifica que aparece en Admin → Reservas
 
-#### C) Probar Móvil:
+#### D) Probar Móvil:
 **Opción 1 - Tu celular:**
 1. Conéctate a la misma WiFi
 2. Abre: http://169.254.83.107:3000
@@ -66,17 +119,48 @@ El script te preguntará:
 
 ## 🎨 CARACTERÍSTICAS IMPLEMENTADAS
 
-### 🔒 Seguridad
+### � Galería de Imágenes (NUEVO) ✨
+- ✅ Subir fotos desde celular/cámara
+- ✅ Optimización automática (resize + compresión)
+- ✅ Conversión a WebP (96% menos peso)
+- ✅ Dos métodos: archivo o URL
+- ✅ Gestión de orden (flechas)
+- ✅ Filtros por categoría (9 tipos)
+- ✅ Link a Instagram
+- ✅ Eliminación con confirmación
+
+### 👥 Sistema de Clientes (NUEVO) ✨
+- ✅ Historial automático
+- ✅ Autocompletar datos (WhatsApp)
+- ✅ Tracking de servicios frecuentes
+- ✅ Búsqueda con debounce (500ms)
+
+### 📊 Estadísticas (NUEVO) ✨
+- ✅ Dashboard con 6 métricas
+- ✅ Gráfico top 5 servicios
+- ✅ Breakdown métodos de pago
+- ✅ Servicio más popular
+- ✅ Cálculos en tiempo real
+
+### 💳 Método de Pago (NUEVO) ✨
+- ✅ Selector efectivo/transferencia
+- ✅ Guardado en reserva
+- ✅ Visible en admin
+- ✅ Estadísticas por método
+
+### �🔒 Seguridad
 - ✅ Login protegido en `/admin`
 - ✅ Sesión persistente
 - ✅ Contraseña personalizable
 - ✅ UI profesional de login
+- ✅ Easter egg (5 clicks en logo)
 
 ### 📱 Responsive Design
 - ✅ Móvil (< 640px): Layout vertical
 - ✅ Tablet (640-1024px): 2-3 columnas
 - ✅ Desktop (> 1024px): 4 columnas
 - ✅ Todos los componentes adaptados
+- ✅ Menu hamburguesa animado
 
 ### ✨ Animaciones
 - ✅ Fade in al cargar
@@ -85,6 +169,7 @@ El script te preguntará:
 - ✅ Pulse en selección
 - ✅ Loading spinners
 - ✅ Smooth transitions
+- ✅ Hamburger menu (3 líneas → X)
 
 ---
 

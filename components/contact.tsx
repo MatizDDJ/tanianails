@@ -57,11 +57,11 @@ export default function Contact() {
             </div>
             <h3 className="text-white font-semibold mb-2">WhatsApp</h3>
             <Button
-              onClick={() => window.open("https://wa.me/59809164731", "_blank")}
+              onClick={() => window.open("https://wa.me/59899164731", "_blank")}
               variant="link"
-              className="text-[#25D366] hover:text-[#25D366]/80 p-0"
+              className="text-[#25D366] hover:text-[#25D366]/80 p-0 text-sm"
             >
-              +598 XX XXX XXX
+              +598 99 164 731
             </Button>
           </div>
         </div>

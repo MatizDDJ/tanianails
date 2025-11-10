@@ -12,7 +12,7 @@ export default function Hero() {
   }
 
   const openWhatsApp = () => {
-    window.open("https://wa.me/59809164731?text=¡Hola! Quiero reservar un turno en Tania Nails", "_blank")
+    window.open("https://wa.me/59899164731?text=¡Hola! Quiero reservar un turno en Tania Nails", "_blank")
   }
 
   return (

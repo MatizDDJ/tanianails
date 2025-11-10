@@ -114,7 +114,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
 
   const handleWhatsApp = () => {
     const message = `Hola Tania Nails! Confirmé una reserva:\nServicio: ${formData.service}\nFecha: ${formData.date}\nHora: ${formData.time}\nNombre: ${formData.name}\nGracias!`
-    window.open(`https://wa.me/59809164731?text=${encodeURIComponent(message)}`, "_blank")
+    window.open(`https://wa.me/59899164731?text=${encodeURIComponent(message)}`, "_blank")
     onClose()
   }
 

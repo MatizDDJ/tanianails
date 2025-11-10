@@ -4,7 +4,7 @@ import { MessageCircle } from "lucide-react"
 
 export default function WhatsAppButton() {
   const handleClick = () => {
-    window.open("https://wa.me/59809164731?text=¡Hola! Quiero consultar sobre los servicios de Tania Nails", "_blank")
+    window.open("https://wa.me/59899164731?text=¡Hola! Quiero consultar sobre los servicios de Tania Nails", "_blank")
   }
 
   return (
