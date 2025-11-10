@@ -6,8 +6,8 @@ import Image from "next/image"
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-20 bg-gradient-to-b from-black to-[#111111]">
-      <div className="container mx-auto px-4">
+    <section id="contact" className="min-h-screen flex items-center py-20 bg-gradient-to-b from-black to-[#111111]">
+      <div className="container mx-auto px-4 w-full">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 text-glow-purple">Contacto</h2>
           <p className="text-gray-400 text-lg">Encontranos y reservá tu próximo turno</p>

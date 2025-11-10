@@ -17,7 +17,7 @@ export default function Hero() {
   }
 
   return (
-    <section id="hero" className="relative min-h-[90vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20 pb-8 sm:pb-0">
+    <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Effect */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#8b2eff]/20 via-black to-black" />
       <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-[#ff2e91]/30 rounded-full blur-[100px] sm:blur-[120px] animate-float" />

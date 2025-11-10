@@ -52,8 +52,8 @@ export default function Gallery() {
       ? imagenes
       : imagenes.filter((img) => img.categoria === categoriaSeleccionada)
   return (
-    <section id="gallery" className="py-20 bg-gradient-to-b from-black via-[#111111] to-black">
-      <div className="container mx-auto px-4">
+    <section id="gallery" className="min-h-screen flex items-center py-20 bg-gradient-to-b from-black via-[#111111] to-black">
+      <div className="container mx-auto px-4 w-full">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 text-glow-purple">Galería</h2>
           <p className="text-gray-400 text-lg mb-8">Inspirate con nuestros trabajos más recientes</p>

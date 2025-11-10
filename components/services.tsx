@@ -68,7 +68,7 @@ export default function Services() {
   const [selectedService, setSelectedService] = useState<string | null>(null)
 
   return (
-    <section id="services" className="py-10 sm:py-16 md:py-20 relative">
+    <section id="services" className="min-h-screen flex items-center py-10 sm:py-16 md:py-20 relative">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8 sm:mb-12 md:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-3 sm:mb-4 text-glow-pink">Nuestros Servicios</h2>
