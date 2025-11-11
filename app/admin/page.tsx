@@ -179,55 +179,57 @@ export default function AdminPanel() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 border-b border-[#2a2a2a] overflow-x-auto scrollbar-hide">
-          <button
-            onClick={() => setActiveTab("turnos")}
-            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
-              activeTab === "turnos" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Turnos
-          </button>
-          <button
-            onClick={() => setActiveTab("reservas")}
-            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
-              activeTab === "reservas" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Reservas ({reservas.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("galeria")}
-            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
-              activeTab === "galeria" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Galería
-          </button>
-          <button
-            onClick={() => setActiveTab("estadisticas")}
-            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
-              activeTab === "estadisticas" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Estadísticas
-          </button>
-          <button
-            onClick={() => setActiveTab("calendario")}
-            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
-              activeTab === "calendario" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Calendario
-          </button>
-          <button
-            onClick={() => setActiveTab("clientes")}
-            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
-              activeTab === "clientes" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Clientes
-          </button>
+        <div className="mb-4 sm:mb-6 pb-2 border-b border-[#2a2a2a]">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setActiveTab("turnos")}
+              className={`pb-2 px-3 sm:px-4 font-medium transition-all text-xs sm:text-sm ${
+                activeTab === "turnos" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Turnos
+            </button>
+            <button
+              onClick={() => setActiveTab("reservas")}
+              className={`pb-2 px-3 sm:px-4 font-medium transition-all text-xs sm:text-sm ${
+                activeTab === "reservas" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Reservas
+            </button>
+            <button
+              onClick={() => setActiveTab("galeria")}
+              className={`pb-2 px-3 sm:px-4 font-medium transition-all text-xs sm:text-sm ${
+                activeTab === "galeria" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Galería
+            </button>
+            <button
+              onClick={() => setActiveTab("calendario")}
+              className={`pb-2 px-3 sm:px-4 font-medium transition-all text-xs sm:text-sm ${
+                activeTab === "calendario" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Calendario
+            </button>
+            <button
+              onClick={() => setActiveTab("clientes")}
+              className={`pb-2 px-3 sm:px-4 font-medium transition-all text-xs sm:text-sm ${
+                activeTab === "clientes" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Clientes
+            </button>
+            <button
+              onClick={() => setActiveTab("estadisticas")}
+              className={`pb-2 px-3 sm:px-4 font-medium transition-all text-xs sm:text-sm ${
+                activeTab === "estadisticas" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Estadísticas
+            </button>
+          </div>
         </div>
 
         {/* Turnos Tab */}
@@ -361,7 +363,7 @@ export default function AdminPanel() {
         {/* Reservas Tab */}
         {activeTab === "reservas" && (
           <div className="bg-[#111111] border border-[#2a2a2a] rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 animate-fade-in-up">
-            <h2 className="text-base sm:text-lg md:text-xl font-bold text-white mb-3 sm:mb-4">Reservas Recibidas</h2>
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-white mb-3 sm:mb-4">Reservas Recibidas ({reservas.length})</h2>
             <div className="space-y-3">
               {reservas.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">No hay reservas</p>

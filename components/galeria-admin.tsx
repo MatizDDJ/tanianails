@@ -31,9 +31,10 @@ export default function GaleriaAdmin() {
   const [uploading, setUploading] = useState(false)
   const [metodoSubida, setMetodoSubida] = useState<"archivo" | "url">("archivo")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [imagenesSubidas, setImagenesSubidas] = useState<string[]>([])
 
   const [nuevaImagen, setNuevaImagen] = useState({
-    url: "",
+    url: [] as string[],
     alt: "",
     categoria: "Nail Art",
     orden: 0,
@@ -48,43 +49,58 @@ export default function GaleriaAdmin() {
   }, [])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = e.target.files
+    if (!files || files.length === 0) return
 
-    // Validar que sea imagen
-    if (!file.type.startsWith('image/')) {
-      setToast({ message: "Por favor selecciona un archivo de imagen", type: "error" })
-      return
-    }
-
-    // Validar tamaño (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setToast({ message: "La imagen es muy grande (máximo 10MB)", type: "error" })
+    // Validar máximo 5 imágenes
+    if (files.length + imagenesSubidas.length > 5) {
+      setToast({ message: "Máximo 5 imágenes por publicación", type: "error" })
       return
     }
 
     setUploading(true)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const urlsSubidas: string[] = []
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
 
-      const data = await response.json()
+        // Validar que sea imagen
+        if (!file.type.startsWith('image/')) {
+          setToast({ message: `${file.name} no es una imagen válida`, type: "error" })
+          continue
+        }
 
-      if (data.success) {
-        setNuevaImagen(prev => ({ ...prev, url: data.url }))
-        setToast({ message: "Imagen subida exitosamente", type: "success" })
-      } else {
-        throw new Error(data.error)
+        // Validar tamaño (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          setToast({ message: `${file.name} es muy grande (máximo 10MB)`, type: "error" })
+          continue
+        }
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        const data = await response.json()
+
+        if (data.success) {
+          urlsSubidas.push(data.url)
+        } else {
+          throw new Error(data.error)
+        }
       }
+
+      setImagenesSubidas(prev => [...prev, ...urlsSubidas])
+      setNuevaImagen(prev => ({ ...prev, url: [...prev.url, ...urlsSubidas] }))
+      setToast({ message: `${urlsSubidas.length} imagen(es) subida(s) exitosamente`, type: "success" })
     } catch (error: any) {
-      console.error("Error subiendo imagen:", error)
-      setToast({ message: "Error al subir imagen: " + error.message, type: "error" })
+      console.error("Error subiendo imágenes:", error)
+      setToast({ message: "Error al subir imágenes: " + error.message, type: "error" })
     } finally {
       setUploading(false)
     }
@@ -93,35 +109,46 @@ export default function GaleriaAdmin() {
   const handleCrearImagen = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!nuevaImagen.url) {
-      setToast({ message: "La URL de la imagen es requerida", type: "error" })
+    if (!nuevaImagen.url || nuevaImagen.url.length === 0) {
+      setToast({ message: "Debes subir al menos una imagen", type: "error" })
       return
     }
 
     try {
+      // Si solo hay una imagen, guardarla como string, si hay múltiples como array
+      const urlToSave = nuevaImagen.url.length === 1 ? nuevaImagen.url[0] : nuevaImagen.url
+
       await crearImagenGaleria({
-        url: nuevaImagen.url,
+        url: urlToSave,
         alt: nuevaImagen.alt || "Trabajo Tania Nails",
         categoria: nuevaImagen.categoria,
         orden: nuevaImagen.orden || imagenes.length,
       })
 
       setNuevaImagen({
-        url: "",
+        url: [],
         alt: "",
         categoria: "Nail Art",
         orden: 0,
       })
 
+      setImagenesSubidas([])
+
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
 
-      setToast({ message: "Imagen agregada exitosamente", type: "success" })
+      setToast({ message: "Imagen(es) agregada(s) exitosamente", type: "success" })
     } catch (error) {
       console.error("Error creando imagen:", error)
       setToast({ message: "Error al agregar la imagen", type: "error" })
     }
+  }
+
+  const handleEliminarImagenTemporal = (index: number) => {
+    const nuevasUrls = nuevaImagen.url.filter((_, i) => i !== index)
+    setNuevaImagen(prev => ({ ...prev, url: nuevasUrls }))
+    setImagenesSubidas(nuevasUrls)
   }
 
   const handleEliminarImagen = async (id: string) => {
@@ -218,46 +245,73 @@ export default function GaleriaAdmin() {
             {metodoSubida === "archivo" && (
               <div className="sm:col-span-2">
                 <label className="block text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
-                  Selecciona una imagen
+                  Selecciona imágenes (máximo 5)
                 </label>
                 <div className="relative">
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={handleFileUpload}
                     className="hidden"
                     id="file-upload"
-                    disabled={uploading}
+                    disabled={uploading || imagenesSubidas.length >= 5}
                   />
                   <label
                     htmlFor="file-upload"
                     className={`flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#1a1a1a] border-2 border-dashed border-[#2a2a2a] rounded-lg cursor-pointer hover:border-[#8b2eff] transition-colors ${
-                      uploading ? "opacity-50 cursor-not-allowed" : ""
+                      uploading || imagenesSubidas.length >= 5 ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
                     {uploading ? (
                       <>
                         <div className="w-5 h-5 border-2 border-[#8b2eff] border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm text-gray-400">Subiendo imagen...</span>
+                        <span className="text-sm text-gray-400">Subiendo imágenes...</span>
                       </>
-                    ) : nuevaImagen.url ? (
+                    ) : imagenesSubidas.length > 0 ? (
                       <>
                         <ImageIcon className="w-5 h-5 text-green-500" />
-                        <span className="text-sm text-green-500">Imagen lista ✓</span>
+                        <span className="text-sm text-green-500">{imagenesSubidas.length} imagen(es) lista(s) ✓</span>
                       </>
                     ) : (
                       <>
                         <Upload className="w-5 h-5 text-gray-400" />
                         <span className="text-sm text-gray-400">
-                          Toca para seleccionar foto
+                          Toca para seleccionar fotos
                         </span>
                       </>
                     )}
                   </label>
                 </div>
+
+                {/* Preview de imágenes subidas */}
+                {imagenesSubidas.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 gap-2">
+                    {imagenesSubidas.map((url, index) => (
+                      <div key={index} className="relative aspect-square group">
+                        <img
+                          src={url}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-full object-cover rounded-lg border border-[#2a2a2a]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleEliminarImagenTemporal(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                        <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                          {index + 1}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                  📱 La imagen se optimiza automáticamente (máx 10MB)
+                  📱 Puedes seleccionar hasta 5 imágenes para crear un carrusel (máx 10MB cada una)
                 </p>
               </div>
             )}
@@ -266,18 +320,20 @@ export default function GaleriaAdmin() {
             {metodoSubida === "url" && (
               <div className="sm:col-span-2">
                 <label className="block text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
-                  URL de la Imagen
+                  URL de la Imagen (una por línea para múltiples)
                 </label>
-                <Input
-                  type="url"
-                  value={nuevaImagen.url}
-                  onChange={(e) => setNuevaImagen({ ...nuevaImagen, url: e.target.value })}
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  className="bg-[#1a1a1a] border-[#2a2a2a] text-white text-sm h-10 sm:h-11"
-                  required
+                <textarea
+                  value={nuevaImagen.url.join('\n')}
+                  onChange={(e) => {
+                    const urls = e.target.value.split('\n').filter(url => url.trim())
+                    setNuevaImagen({ ...nuevaImagen, url: urls })
+                  }}
+                  placeholder="https://ejemplo.com/imagen1.jpg&#10;https://ejemplo.com/imagen2.jpg"
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2 min-h-[100px]"
+                  rows={5}
                 />
                 <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                  Pega el link de ImgBB, Imgur o Instagram
+                  Pega los links de ImgBB, Imgur o Instagram (máximo 5)
                 </p>
               </div>
             )}
@@ -334,54 +390,64 @@ export default function GaleriaAdmin() {
           <p className="text-gray-500 text-center py-8 text-sm">No hay imágenes en la galería</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {imagenes.map((imagen) => (
-              <div
-                key={imagen.id}
-                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg overflow-hidden hover:border-[#ff2e91] transition-all group"
-              >
-                <div className="relative aspect-square">
-                  <img
-                    src={imagen.url}
-                    alt={imagen.alt}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.src = "/placeholder.svg"
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => handleCambiarOrden(imagen.id!, "up")}
-                      className="p-2 bg-[#8b2eff] rounded-lg hover:bg-[#8b2eff]/80 transition-colors"
-                      disabled={imagen.orden === 0}
-                    >
-                      <ArrowUp className="w-4 h-4 text-white" />
-                    </button>
-                    <button
-                      onClick={() => handleEliminarImagen(imagen.id!)}
-                      className="p-2 bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4 text-white" />
-                    </button>
-                    <button
-                      onClick={() => handleCambiarOrden(imagen.id!, "down")}
-                      className="p-2 bg-[#8b2eff] rounded-lg hover:bg-[#8b2eff]/80 transition-colors"
-                    >
-                      <ArrowDown className="w-4 h-4 text-white" />
-                    </button>
+            {imagenes.map((imagen) => {
+              const imageUrl = Array.isArray(imagen.url) ? imagen.url[0] : imagen.url
+              const imageCount = Array.isArray(imagen.url) ? imagen.url.length : 1
+              
+              return (
+                <div
+                  key={imagen.id}
+                  className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg overflow-hidden hover:border-[#ff2e91] transition-all group"
+                >
+                  <div className="relative aspect-square">
+                    <img
+                      src={imageUrl}
+                      alt={imagen.alt}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = "/placeholder.svg"
+                      }}
+                    />
+                    {imageCount > 1 && (
+                      <div className="absolute top-2 right-2 bg-black/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        🎠 {imageCount} fotos
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => handleCambiarOrden(imagen.id!, "up")}
+                        className="p-2 bg-[#8b2eff] rounded-lg hover:bg-[#8b2eff]/80 transition-colors"
+                        disabled={imagen.orden === 0}
+                      >
+                        <ArrowUp className="w-4 h-4 text-white" />
+                      </button>
+                      <button
+                        onClick={() => handleEliminarImagen(imagen.id!)}
+                        className="p-2 bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4 text-white" />
+                      </button>
+                      <button
+                        onClick={() => handleCambiarOrden(imagen.id!, "down")}
+                        className="p-2 bg-[#8b2eff] rounded-lg hover:bg-[#8b2eff]/80 transition-colors"
+                      >
+                        <ArrowDown className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <p className="text-white text-sm font-medium truncate">{imagen.alt}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs text-gray-400 bg-[#2a2a2a] px-2 py-1 rounded">
+                        {imagen.categoria}
+                      </span>
+                      <span className="text-xs text-gray-500">Orden: {imagen.orden}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="p-3">
-                  <p className="text-white text-sm font-medium truncate">{imagen.alt}</p>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-xs text-gray-400 bg-[#2a2a2a] px-2 py-1 rounded">
-                      {imagen.categoria}
-                    </span>
-                    <span className="text-xs text-gray-500">Orden: {imagen.orden}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
