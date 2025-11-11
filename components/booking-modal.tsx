@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { obtenerTurnosDisponibles, crearReserva, actualizarTurno, buscarCliente, obtenerOCrearCliente, actualizarHistorialCliente } from "@/lib/firebase-services"
 import type { TurnoDisponible } from "@/lib/firebase-services"
 import Toast from "@/components/toast"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface BookingModalProps {
   serviceName: string
@@ -26,6 +27,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [turnosDisponibles, setTurnosDisponibles] = useState<TurnoDisponible[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingTurnos, setLoadingTurnos] = useState(false)
   const [buscandoCliente, setBuscandoCliente] = useState(false)
   const [selectedTurnoId, setSelectedTurnoId] = useState<string | null>(null)
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
@@ -37,12 +39,15 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
   }, [formData.date])
 
   const cargarTurnos = async () => {
+    setLoadingTurnos(true)
     try {
       const turnos = await obtenerTurnosDisponibles(formData.date)
       setTurnosDisponibles(turnos)
     } catch (error) {
       console.error("[v0] Error loading turnos:", error)
       setToast({ message: "Error al cargar los horarios disponibles", type: "error" })
+    } finally {
+      setLoadingTurnos(false)
     }
   }
 
@@ -176,7 +181,13 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                       <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2 text-[#8b2eff]" />
                       Horarios Disponibles
                     </label>
-                    {turnosDisponibles.length > 0 ? (
+                    {loadingTurnos ? (
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
+                        {[...Array(8)].map((_, i) => (
+                          <Skeleton key={i} className="h-10 sm:h-12 w-full" />
+                        ))}
+                      </div>
+                    ) : turnosDisponibles.length > 0 ? (
                       <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2 max-h-40 sm:max-h-48 overflow-y-auto pr-1">
                         {turnosDisponibles.map((turno) => (
                           <button

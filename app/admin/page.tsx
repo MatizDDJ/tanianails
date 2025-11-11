@@ -19,6 +19,8 @@ import {
 import Toast from "@/components/toast"
 import AdminAuth from "@/components/admin-auth"
 import GaleriaAdmin from "@/components/galeria-admin"
+import CalendarioAdmin from "@/components/calendario-admin"
+import GestionClientes from "@/components/gestion-clientes"
 
 const serviciosDisponibles = [
   "Soft Gel",
@@ -34,7 +36,7 @@ const serviciosDisponibles = [
 export default function AdminPanel() {
   const [turnos, setTurnos] = useState<TurnoDisponible[]>([])
   const [reservas, setReservas] = useState<Reserva[]>([])
-  const [activeTab, setActiveTab] = useState<"turnos" | "reservas" | "galeria" | "estadisticas">("turnos")
+  const [activeTab, setActiveTab] = useState<"turnos" | "reservas" | "galeria" | "estadisticas" | "calendario" | "clientes">("turnos")
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
   const [generandoTurnos, setGenerandoTurnos] = useState(false)
 
@@ -209,6 +211,22 @@ export default function AdminPanel() {
             }`}
           >
             Estadísticas
+          </button>
+          <button
+            onClick={() => setActiveTab("calendario")}
+            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
+              activeTab === "calendario" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Calendario
+          </button>
+          <button
+            onClick={() => setActiveTab("clientes")}
+            className={`pb-2 sm:pb-3 px-3 sm:px-4 font-medium transition-all whitespace-nowrap text-xs sm:text-sm md:text-base ${
+              activeTab === "clientes" ? "text-[#ff2e91] border-b-2 border-[#ff2e91]" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Clientes
           </button>
         </div>
 
@@ -415,6 +433,12 @@ export default function AdminPanel() {
 
         {/* Galería Tab */}
         {activeTab === "galeria" && <GaleriaAdmin />}
+
+        {/* Calendario Tab */}
+        {activeTab === "calendario" && <CalendarioAdmin />}
+
+        {/* Clientes Tab */}
+        {activeTab === "clientes" && <GestionClientes />}
 
         {/* Estadísticas Tab */}
         {activeTab === "estadisticas" && (

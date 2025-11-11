@@ -37,7 +37,7 @@ export interface Reserva {
 
 export interface ImagenGaleria {
   id?: string
-  url: string
+  url: string | string[]  // Ahora puede ser array de URLs
   alt: string
   categoria: string
   orden: number

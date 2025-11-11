@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Instagram } from "lucide-react"
 import { escucharImagenesGaleria, type ImagenGaleria } from "@/lib/firebase-services"
+import { Skeleton } from "@/components/ui/skeleton"
+import CarruselImagenes from "@/components/carrusel-imagenes"
 
 const galleryImagesDefault = [
   { id: "1", url: "/nail-art-pink-glitter.jpg", alt: "Nail art rosa", categoria: "Nail Art", orden: 0 },
@@ -32,6 +34,7 @@ export default function Gallery() {
   const [imagenes, setImagenes] = useState<ImagenGaleria[]>([])
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos")
   const [loading, setLoading] = useState(true)
+  const [carruselAbierto, setCarruselAbierto] = useState<ImagenGaleria | null>(null)
 
   useEffect(() => {
     const unsubscribe = escucharImagenesGaleria((imagenesActualizadas) => {
@@ -77,9 +80,10 @@ export default function Gallery() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="w-12 h-12 border-4 border-[#8b2eff] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400">Cargando galería...</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <Skeleton key={i} className="aspect-square w-full rounded-xl" />
+            ))}
           </div>
         ) : imagenesFiltradas.length === 0 ? (
           <div className="text-center py-12">
@@ -93,31 +97,51 @@ export default function Gallery() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {imagenesFiltradas.map((image, index) => (
-              <div
-                key={image.id}
-                className="group relative aspect-square overflow-hidden rounded-xl border border-[#2a2a2a] hover:border-[#8b2eff] transition-all duration-300 animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <img
-                  src={image.url || "/placeholder.svg"}
-                  alt={image.alt}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.src = "/placeholder.svg"
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                  <div>
-                    <p className="text-white text-sm font-medium">{image.alt}</p>
-                    <p className="text-gray-300 text-xs">{image.categoria}</p>
+            {imagenesFiltradas.map((image, index) => {
+              const imageUrl = Array.isArray(image.url) ? image.url[0] : image.url
+              const imageCount = Array.isArray(image.url) ? image.url.length : 1
+              
+              return (
+                <div
+                  key={image.id}
+                  onClick={() => setCarruselAbierto(image)}
+                  className="group relative aspect-square overflow-hidden rounded-xl border border-[#2a2a2a] hover:border-[#8b2eff] transition-all duration-300 animate-fade-in-up cursor-pointer"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <img
+                    src={imageUrl || "/placeholder.svg"}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.src = "/placeholder.svg"
+                    }}
+                  />
+                  {imageCount > 1 && (
+                    <div className="absolute top-2 right-2 bg-black/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                      +{imageCount}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                    <div>
+                      <p className="text-white text-sm font-medium">{image.alt}</p>
+                      <p className="text-gray-300 text-xs">{image.categoria}</p>
+                    </div>
                   </div>
+                  <div className="absolute inset-0 glow-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-                <div className="absolute inset-0 glow-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            ))}
+              )
+            })}
           </div>
+        )}
+
+        {carruselAbierto && (
+          <CarruselImagenes
+            images={Array.isArray(carruselAbierto.url) ? carruselAbierto.url : [carruselAbierto.url]}
+            alt={carruselAbierto.alt}
+            categoria={carruselAbierto.categoria}
+            onClose={() => setCarruselAbierto(null)}
+          />
         )}
 
         <div className="text-center mt-12">
