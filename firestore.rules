@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Turnos disponibles - Lectura pública, escritura solo admin
+    match /turnos_disponibles/{turnoId} {
+      allow read: if true;
+      allow write: if true; // Cambiar por autenticación si implementas login
+    }
+    
+    // Reservas - Crear público, leer/modificar solo admin
+    match /reservas/{reservaId} {
+      allow read: if true;
+      allow create: if true; // Cualquiera puede hacer reserva
+      allow update, delete: if true; // Cambiar por autenticación
+    }
+    
+    // Galería - Lectura pública, escritura solo admin
+    match /galeria/{imagenId} {
+      allow read: if true; // Todos pueden ver la galería
+      allow write: if true; // Cambiar por autenticación si implementas login
+    }
+    
+    // Clientes - Solo admin puede ver/modificar
+    match /clientes/{clienteId} {
+      allow read, write: if true; // Cambiar por autenticación
+    }
+  }
+}

@@ -114,7 +114,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
 
   const handleWhatsApp = () => {
     const message = `Hola Tania Nails! Confirmé una reserva:\nServicio: ${formData.service}\nFecha: ${formData.date}\nHora: ${formData.time}\nNombre: ${formData.name}\nGracias!`
-    window.open(`https://wa.me/59899164731?text=${encodeURIComponent(message)}`, "_blank")
+    window.open(`https://wa.me/59891647312?text=${encodeURIComponent(message)}`, "_blank")
     onClose()
   }
 
@@ -250,7 +250,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                           : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300 hover:border-[#ff2e91]"
                       }`}
                     >
-                      💵 Efectivo
+                       Efectivo
                     </button>
                     <button
                       type="button"
@@ -261,7 +261,7 @@ export default function BookingModal({ serviceName, onClose }: BookingModalProps
                           : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300 hover:border-[#ff2e91]"
                       }`}
                     >
-                      🏦 Transferencia
+                       Transferencia
                     </button>
                   </div>
                 </div>
